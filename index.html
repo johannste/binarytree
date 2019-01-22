@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Binary Tree</title>
+</head>
+<body>
+<script type="application/ecmascript">
+    function BinaryTree() {
+        let Node = function (key) {
+            this.key = key;
+            this.left = null;
+            this.right = null;
+        };
+
+        let root = null;
+
+        let insertNode = (node, newNode) => {
+            if (newNode.key <= node.key) {
+                if (node.left === null) {
+                    node.left = newNode;
+                } else {
+                    insertNode(node.left, newNode);
+                }
+            } else {
+                if (node.right === null) {
+                    node.right = newNode;
+                } else {
+                    insertNode(node.right, newNode);
+                }
+            }
+        };
+
+        this.insert = key => {
+            let newNode = new Node(key);
+            if (root === null) {
+                root = newNode;
+            } else {
+                insertNode(root, newNode);
+            }
+        };
+
+        let inOrderTraverseNode = (node, callback) => {
+            if (node) {
+                inOrderTraverseNode(node.left, callback);
+                callback(node.key);
+                inOrderTraverseNode(node.right, callback);
+            }
+        };
+
+        // 中序遍历接口
+        this.inOrderTraverse = callback => {
+            inOrderTraverseNode(root, callback);
+        };
+
+        let preOrderTraverseNode = (node, callback) => {
+            if (node) {
+                callback(node.key);
+                preOrderTraverseNode(node.left, callback);
+                preOrderTraverseNode(node.right, callback);
+            }
+        };
+
+        // 前序遍历接口
+        this.preOrderTraverse = callback => {
+            preOrderTraverseNode(root, callback);
+        };
+
+        let afterOrderTraverseNode = (node, callback) => {
+            if (node) {
+                afterOrderTraverseNode(node.left, callback);
+                afterOrderTraverseNode(node.right, callback);
+                callback(node.key);
+            }
+        };
+
+        // 后序遍历接口
+        this.afterOrderTraverse = callback => {
+            afterOrderTraverseNode(root, callback);
+        };
+
+        let minNode = node => {
+            if (node) {
+                while (node && node.left) {
+                    node = node.left;
+                }
+                return node.key;
+            }
+        };
+
+        // 最小值接口
+        this.min = () => {
+            return minNode(root);
+        };
+
+        let maxNode = node => {
+            if (node) {
+                while (node && node.right) {
+                    node = node.right;
+                }
+                return node.key;
+            }
+        };
+
+        // 最大值接口
+        this.max = () => {
+            return maxNode(root);
+        };
+
+        let searchNode = (node, key) => {
+            if (node === null) {
+                return false;
+            }
+            if (key < node.key) {
+                return searchNode(node.left, key);
+            } else if (key > node.key) {
+                return searchNode(node.right, key);
+            } else {
+                return true;
+            }
+        };
+
+        // 查找特定值接口
+        this.search = key => {
+            return searchNode(root, key);
+        };
+
+        let findMinNode = node => {
+            if (node) {
+                while (node && node.left) {
+                    node = node.left;
+                }
+                return node;
+            }
+            return null;
+        };
+
+
+        let removeNode = (node, key) => {
+            if (node === null) {
+                return null;
+            }
+            if (key < node.key) {
+                node.left = removeNode(node.left, key);
+                return node;
+            } else if (key > node.key) {
+                node.right = removeNode(node.right, key);
+                return node;
+            } else {
+                if (node.left === null && node.right === null) {
+                    node = null;
+                    return node;
+                }
+                if (node.left === null) {
+                    node = node.right;
+                    return node;
+                } else if (node.right === null) {
+                    node = node.left;
+                    return node;
+                }
+                let aux = findMinNode(node.right);
+                node.key = aux.key;
+                node.right = removeNode(node.right, node.key);
+                return node;
+            }
+        };
+
+        this.remove = key => {
+            root = removeNode(root, key);
+        };
+    }
+
+    let nodes = [8, 3, 10, 1, 6, 14, 4, 7, 13];
+    let binaryTree = new BinaryTree();
+    nodes.forEach(key => {
+        binaryTree.insert(key);
+    });
+
+    let callback = key => {
+        console.log(key);
+    };
+
+    // binaryTree.inOrderTraverse(callback);
+    // binaryTree.preOrderTraverse(callback);
+    // let val = 1;
+    // console.log(binaryTree.search(val) ? val + ' is found' : val + ' is not found');
+    binaryTree.remove(6);
+    binaryTree.inOrderTraverse(callback);
+</script>
+</body>
+</html>
